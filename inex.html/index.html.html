@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ANIME QUEST: start your journey</title>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0618;--ink:#fff4fb;--pink:#ff2e93;--cyan:#22e4ff;--gold:#ffd23f;--vio:#7b2cff;--card:#17103a;box-sizing:border-box;padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:calc(64px + env(safe-area-inset-top,0px));scroll-behavior:smooth;background:var(--bg)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Zen Maru Gothic",system-ui,sans-serif;line-height:1.6;overflow-x:hidden}
+h1,h2,h3{font-family:"Dela Gothic One","Zen Maru Gothic",sans-serif;font-weight:400;margin:0;line-height:1.1}
+canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#bg{z-index:0}#fx{z-index:50}
+button{font:inherit;cursor:pointer;color:inherit;touch-action:manipulation}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
+main,footer,#hud{position:relative;z-index:2}
+#hud{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) 5vw 10px;background:rgba(10,6,24,.88);border-bottom:3px solid var(--pink);backdrop-filter:blur(6px)}
+#hud b{font-family:"Dela Gothic One";font-weight:400;color:var(--gold);white-space:nowrap}
+.xp{flex:1;height:16px;border:2px solid #fff;border-radius:99px;overflow:hidden;background:#000;min-width:60px}
+.xp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink),var(--gold));transition:width .5s}
+#xpt{font-weight:700;white-space:nowrap;font-size:.9rem}
+#gate{position:fixed;inset:0;z-index:100;background:#000;display:grid;place-items:center;text-align:center;padding:20px;transition:transform .7s cubic-bezier(.7,0,1,.4),opacity .7s}
+#gate.go{transform:scale(8);opacity:0;pointer-events:none}
+#gate p{margin:14px 0 28px;opacity:.85}
+.enter{background:var(--pink);border:3px solid #fff;border-radius:999px;padding:16px 44px;font-weight:700;font-size:1.3rem;animation:pulse 1s infinite}
+@keyframes pulse{50%{transform:scale(1.1);box-shadow:0 0 50px var(--pink)}}
+.glitch{font-size:clamp(2.8rem,12vw,8.5rem);position:relative;display:inline-block;text-shadow:0 0 30px var(--pink),0 0 70px var(--vio)}
+.glitch::before,.glitch::after{content:attr(data-t);position:absolute;inset:0;overflow:hidden}
+.glitch::before{color:var(--cyan);left:3px;text-shadow:none;animation:g1 2.2s infinite steps(1)}
+.glitch::after{color:var(--pink);left:-3px;text-shadow:none;mix-blend-mode:screen;animation:g2 2.2s infinite steps(1)}
+@keyframes g1{0%,85%,100%{clip-path:inset(0 0 100% 0)}88%{clip-path:inset(20% 0 55% 0)}93%{clip-path:inset(60% 0 10% 0)}}
+@keyframes g2{0%,83%,100%{clip-path:inset(100% 0 0 0)}87%{clip-path:inset(50% 0 20% 0)}95%{clip-path:inset(5% 0 75% 0)}}
+.hero{min-height:80vh;display:grid;place-items:center;text-align:center;padding:7vw 5vw 3vw}
+.sub{font-size:clamp(1rem,2.6vw,1.45rem);font-weight:700;margin:16px auto 26px;max-width:36ch;min-height:3.2em}
+.cta{display:inline-block;background:var(--gold);color:#12062e;padding:14px 30px;border-radius:999px;font-weight:700;font-size:1.1rem;text-decoration:none;box-shadow:0 6px 0 #b8860b,0 0 30px rgba(255,210,63,.6)}
+.mq{overflow:hidden;white-space:nowrap;background:var(--pink);color:#12062e;font-family:"Dela Gothic One";padding:8px 0;border-block:3px solid #fff;transform:rotate(-1.5deg);margin:10px -10px}
+.mq div{display:inline-block;animation:mq 16s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+section{max-width:1100px;margin:auto;padding:46px 5vw}
+h2{font-size:clamp(1.8rem,5vw,3rem);margin-bottom:8px}
+.lead{max-width:58ch;opacity:.9;margin:0 0 22px}
+.panel{border:3px solid var(--cyan);border-radius:14px;padding:clamp(16px,4vw,32px);background:rgba(23,16,58,.82);box-shadow:0 0 40px rgba(34,228,255,.25)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.row>span{font-weight:700;min-width:140px}
+.chip{border:2px solid #fff;background:transparent;border-radius:99px;padding:6px 16px;font-weight:700}
+.chip[aria-pressed="true"]{background:var(--pink);border-color:var(--pink);color:#12062e}
+.go{background:var(--gold);color:#12062e;border:0;border-radius:999px;padding:16px 38px;font-weight:700;font-size:1.2rem;box-shadow:0 6px 0 #b8860b;margin-top:8px}
+.go:active{transform:translateY(4px);box-shadow:0 2px 0 #b8860b}
+#res{margin-top:24px}
+.big{display:grid;grid-template-columns:200px 1fr;border:3px solid var(--gold);border-radius:14px;overflow:hidden;box-shadow:0 0 40px var(--gold);background:var(--card);animation:pop .7s cubic-bezier(.2,1.6,.4,1)}
+.big .po{height:100%;min-height:220px;font-size:1.7rem}
+.big .bd{padding:18px}
+.big h3{font-size:1.6rem;margin-bottom:6px}
+.path{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:14px;font-weight:700}
+.path span{background:var(--vio);border-radius:99px;padding:3px 14px}
+@keyframes pop{from{transform:scale(0) rotate(-12deg)}}
+.po{display:flex;align-items:flex-end;padding:10px;font-family:"Dela Gothic One";color:#fff;text-shadow:2px 2px 0 rgba(0,0,0,.7)}
+.tags{display:flex;gap:5px;flex-wrap:wrap;margin:6px 0}
+.tags i{font-style:normal;font-size:.78rem;font-weight:700;background:rgba(255,255,255,.15);border-radius:99px;padding:1px 10px}
+/* quest map */
+.lvl{margin-bottom:34px}
+.lvl h3{font-size:1.4rem;display:flex;align-items:center;gap:10px}
+.lvl h3 em{font-style:normal;font-size:.95rem;font-family:"Zen Maru Gothic";font-weight:700;opacity:.8}
+.lvl h3 span{display:grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--c);color:#12062e;border:3px solid #fff}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:14px;border-left:4px dashed var(--c);padding-left:16px}
+.tile{--c:#fff;text-align:left;background:var(--card);border:3px solid rgba(255,255,255,.5);border-radius:12px;overflow:hidden;padding:0;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.tile:hover{transform:translateY(-4px) rotate(-1deg);box-shadow:0 8px 24px rgba(255,46,147,.5)}
+.tile .po{height:84px;font-size:1.1rem;position:relative}
+.tile .bd{padding:10px 12px 12px;font-size:.9rem}
+.tile b{display:block;font-size:1rem}
+.tile .meta{opacity:.75;font-size:.82rem}
+.tile .st{margin-top:6px;font-weight:700;color:var(--cyan)}
+.tile.done{border-color:var(--gold);box-shadow:0 0 22px var(--gold)}
+.tile.done .st{color:var(--gold)}
+.tile.done .po::after{content:"✓";position:absolute;top:6px;right:10px;font-size:1.8rem;color:#fff;background:#18a558;border-radius:50%;width:34px;height:34px;display:grid;place-items:center}
+details{background:var(--card);border:2px solid #fff;border-radius:10px;padding:12px 18px;margin-bottom:10px}
+summary{font-weight:700;cursor:pointer}
+details p{margin:8px 0 0;opacity:.88}
+#banner{position:fixed;inset:0;display:grid;place-items:center;z-index:55;pointer-events:none;font-family:"Dela Gothic One";font-size:clamp(3rem,15vw,10rem);text-align:center;color:var(--gold);-webkit-text-stroke:3px #000;opacity:0;padding:10px}
+#banner.on{animation:bn 1.2s}
+@keyframes bn{0%{opacity:0;transform:scale(4) rotate(-8deg)}15%{opacity:1;transform:scale(1) rotate(-3deg)}80%{opacity:1}100%{opacity:0;transform:scale(1.3)}}
+#flash{position:fixed;inset:0;background:#fff;opacity:0;pointer-events:none;z-index:60}
+#flash.on{animation:ff .8s}
+@keyframes ff{from{opacity:1}to{opacity:0}}
+.shake main{animation:sk .07s infinite}
+@keyframes sk{25%{transform:translate(7px,-6px)}50%{transform:translate(-7px,5px)}75%{transform:translate(5px,7px)}}
+html.rainbow{animation:hue 2s linear infinite}
+@keyframes hue{to{filter:hue-rotate(360deg)}}
+footer{text-align:center;padding:30px 5vw 50px;opacity:.75}
+@media(max-width:700px){.big{grid-template-columns:1fr}.big .po{min-height:110px}.row>span{min-width:100%}#xpt{display:none}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important}}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas><canvas id="fx"></canvas><div id="flash"></div><div id="banner"></div>
+<div id="gate"><div><h1 class="glitch" data-t="ANIME QUEST">ANIME QUEST</h1><p>Your anime journey starts now. Sound on!</p><button class="enter" id="enter">START</button></div></div>
+<div id="hud"><b id="rk">Newbie</b><div class="xp"><i id="xpf"></i></div><span id="xpt">0 XP</span></div>
+<main>
+<div class="hero"><div>
+  <h1 class="glitch" data-t="LEVEL 1: NEWBIE" id="logo">LEVEL 1: NEWBIE</h1>
+  <div class="sub" id="typed"></div>
+  <a class="cta" href="#find">Find my first anime</a>
+</div></div>
+<div class="mq"><div id="mq"></div></div>
+
+<section id="find">
+  <h2>Find my first anime</h2>
+  <p class="lead">Pick a mood and how much time you have. We will reveal your first anime, plus what to watch after it.</p>
+  <div class="panel">
+    <div class="row"><span>I want something</span><div class="row" id="fMood" style="margin:0"></div></div>
+    <div class="row"><span>I have time for</span><div class="row" id="fLen" style="margin:0"></div></div>
+    <button class="go" id="reveal">Reveal my anime!</button>
+    <div id="res" aria-live="polite"></div>
+  </div>
+</section>
+
+<section id="quest">
+  <h2>The quest map</h2>
+  <p class="lead">Four levels, from easy start to deep cuts. Tap a show when you have watched it to earn 100 XP and rank up from Newbie to Anime Sage.</p>
+  <div id="map"></div>
+</section>
+
+<section id="faq">
+  <h2>Beginner tips</h2>
+  <details><summary>Subtitles or dub?</summary><p>Both are fine. Subtitles keep the Japanese voices, dubs let you multitask. Try episode one both ways.</p></details>
+  <details><summary>Where can I watch?</summary><p>Legal services such as Crunchyroll, Netflix and Prime Video carry many of these. It depends on your country, so search the title on JustWatch.</p></details>
+  <details><summary>What if I don't like it?</summary><p>Give it three episodes. If it still isn't clicking, drop it and try a different mood. That is normal.</p></details>
+  <details><summary>Do I watch in order?</summary><p>For story shows, yes. Each season builds on the last. Movies like Your Name and Spirited Away stand alone.</p></details>
+</section>
+</main>
+<footer>Fan-made guide, no studio affiliation. Episode counts are for season 1 where noted. Support official releases. Secret: ↑ ↑ ↓ ↓ ← → ← → B A, or tap the big title 5 times.</footer>
+
+<script>
+const $=s=>document.querySelector(s),RM=matchMedia("(prefers-reduced-motion:reduce)").matches,rnd=(a,b)=>a+Math.random()*(b-a);
+const A=[
+["Spy x Family",2022,25,"25 eps (S1)",["Funny","Action","Cozy"],1,"A spy, an assassin and a telepath fake a family. Warm and very funny.","#ff7a45,#ffd36b"],
+["Haikyu!!",2014,25,"25 eps (S1)",["Funny","Emotional"],1,"A short volleyball player chases a big dream. No sports knowledge needed.","#ff9f1c,#c08400"],
+["Laid-Back Camp",2018,12,"12 eps",["Cozy"],1,"Friends camp in the mountains with hot food and slow evenings.","#3a8f5c,#1c5d3a"],
+["Demon Slayer",2019,26,"26 eps (S1)",["Action","Emotional"],1,"A kind boy picks up a sword to save his sister. Gorgeous fights.","#0f766e,#fb7185"],
+["One Punch Man",2015,12,"12 eps (S1)",["Action","Funny"],1,"A hero who wins every fight in one hit. Big action, big jokes.","#e6b800,#e63946"],
+["My Hero Academia",2016,13,"13 eps (S1)",["Action","Funny"],1,"A superhero school story and an easy bridge from Western comics.","#2b9348,#0b5d1e"],
+["Your Name",2016,0,"Movie, 106 min",["Emotional"],1,"Two strangers swap bodies and slowly feel connected. A great first movie.","#ff5d8f,#5a7bff"],
+["Frieren",2023,28,"28 eps",["Fantasy","Emotional","Cozy"],2,"After the hero's party wins, an elf mage learns what time means to humans.","#7a5cff,#3a86c9"],
+["Kaguya-sama",2019,12,"12 eps (S1)",["Funny"],2,"Two proud geniuses will do anything to avoid confessing first.","#c53030,#d96a9a"],
+["Mob Psycho 100",2016,12,"12 eps (S1)",["Action","Funny","Emotional"],2,"A shy boy with huge powers just wants a normal life.","#6d28d9,#0891b2"],
+["Jujutsu Kaisen",2020,24,"24 eps (S1)",["Action","Fantasy"],2,"Curses, sorcerers and some of the best animated fights around.","#1e3a8a,#7c5cd6"],
+["Bocchi the Rock!",2022,12,"12 eps",["Funny","Cozy"],2,"A painfully shy girl joins a band. Funny and wonderfully weird.","#e2559c,#d9a400"],
+["Violet Evergarden",2018,13,"13 eps",["Emotional"],2,"A former soldier writes letters for others and learns what love means.","#4f6bd8,#a05cd0"],
+["Spirited Away",2001,0,"Movie, 125 min",["Fantasy","Emotional","Cozy"],2,"A girl works in a bathhouse for spirits to save her parents.","#1c7c7d,#2fa88a"],
+["Fullmetal Alchemist: Brotherhood",2009,64,"64 eps",["Action","Fantasy","Emotional"],3,"Two brothers pay a heavy price for forbidden alchemy. A fan favorite.","#b3362e,#e07b1a"],
+["Attack on Titan",2013,25,"25 eps (S1)",["Action","Mind-bending"],3,"Humanity hides behind walls from giants. Intense, with big twists.","#2b2b2b,#a37a1a"],
+["Death Note",2006,37,"37 eps",["Mind-bending"],3,"A student finds a notebook that kills, and a genius detective hunts him.","#111,#7a1f3d"],
+["Cowboy Bebop",1998,26,"26 eps",["Action","Emotional"],3,"Bounty hunters drift through space with jazz and a haunting past.","#1b1740,#5a7bff"],
+["Steins;Gate",2011,24,"24 eps",["Mind-bending","Emotional"],4,"Texts to the past change everything. Slow start, huge payoff.","#2a9d8f,#264653"],
+["Monster",2004,74,"74 eps",["Mind-bending"],4,"A doctor saves a boy's life and spends years hunting the man he became.","#374151,#6b7280"]];
+const LV=[["Easy start","Short, fun, no homework","#22e4ff"],["Branch out","Try new moods and styles","#ff2e93"],["The classics","Famous series fans keep recommending","#b66bff"],["Deep cuts","Slower, heavier, very rewarding","#ffd23f"]];
+const RK=[[0,"Newbie"],[100,"Rookie"],[300,"Fan"],[600,"Otaku"],[1000,"Senpai"],[1500,"Anime Sage"]];
+/* audio + voice */
+let ac;function beep(f,d=.15,t="square",v=.05,s=0){try{ac=ac||new AudioContext();const o=ac.createOscillator(),g=ac.createGain();o.type=t;o.frequency.value=f;o.connect(g);g.connect(ac.destination);const T=ac.currentTime+s;g.gain.setValueAtTime(v,T);g.gain.exponentialRampToValueAtTime(.0001,T+d);o.start(T);o.stop(T+d)}catch(e){}}
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.rate=1.05;u.pitch=1.5;speechSynthesis.speak(u)}catch(e){}}
+/* canvases */
+const bg=$("#bg"),b=bg.getContext("2d"),fx=$("#fx"),f=fx.getContext("2d");let W,H;
+const rs=()=>{W=bg.width=fx.width=innerWidth;H=bg.height=fx.height=innerHeight};rs();addEventListener("resize",rs);
+const stars=Array.from({length:RM?70:260},(_,i)=>({x:rnd(-1,1),y:rnd(-1,1),z:Math.random(),h:i%3?330:190}));
+let spd=.01,boost=0,mx=0,my=0,sy=scrollY,parts=[],lt=0;
+addEventListener("scroll",()=>{boost+=Math.abs(scrollY-sy)*.0008;sy=scrollY});
+addEventListener("pointermove",e=>{mx=e.clientX/W-.5;my=e.clientY/H-.5;const n=performance.now();if(n-lt>40&&!RM){lt=n;burst(e.clientX,e.clientY,2,["#ff2e93","#22e4ff","#ffd23f"])}});
+function burst(x,y,n=40,c=["#ff2e93","#22e4ff","#ffd23f","#b66bff","#fff"]){for(let i=0;i<n;i++){const a=rnd(0,6.28),s=rnd(2,10);parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-3,l:rnd(50,100),c:c[i%c.length],s:rnd(3,8)})}}
+function loop(){spd+=(.008+boost-spd)*.08;boost*=.93;b.fillStyle="rgba(10,6,24,.3)";b.fillRect(0,0,W,H);
+ const px=(s,z)=>[s.x/z*W*.5+W/2+mx*140,s.y/z*H*.5+H/2+my*140];
+ for(const s of stars){const pz=s.z+spd*2.2;s.z-=spd;if(s.z<=.02){s.z=1;s.x=rnd(-1,1);s.y=rnd(-1,1);continue}const a=px(s,pz),c=px(s,s.z);b.strokeStyle=`hsl(${s.h},100%,${60+(1-s.z)*30}%)`;b.lineWidth=.6+(1-s.z)*3;b.beginPath();b.moveTo(a[0],a[1]);b.lineTo(c[0],c[1]);b.stroke()}
+ f.clearRect(0,0,W,H);parts=parts.filter(p=>p.l>0);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=.25;p.vx*=.98;p.l--;f.globalAlpha=Math.min(1,p.l/30);f.fillStyle=p.c;f.fillRect(p.x,p.y,p.s,p.s)}f.globalAlpha=1;requestAnimationFrame(loop)}loop();
+const flash=()=>{const e=$("#flash");e.classList.remove("on");void e.offsetWidth;e.classList.add("on")};
+const shake=ms=>{if(RM)return;document.body.classList.add("shake");setTimeout(()=>document.body.classList.remove("shake"),ms||600)};
+function banner(t,c){const e=$("#banner");e.textContent=t;e.style.color=c||"";e.classList.remove("on");void e.offsetWidth;e.classList.add("on")}
+/* intro */
+$("#enter").onclick=()=>{$("#gate").classList.add("go");boost=.5;flash();beep(80,.8,"sawtooth",.1);beep(1200,.5,"square",.05,.2);say("Welcome, new hero! Your anime journey starts now!");burst(W/2,H/2,150)};
+$("#mq").innerHTML="アニメ最高 ✦ 冒険 ✦ 友情 ✦ 勝利 ✦ 桜 ✦ 熱血 ✦ ".repeat(14);
+const L=["Never watched anime? Perfect.","Pick a mood. Get your first show.","Earn XP. Become an Anime Sage."];let li=0,ci=0,dl=false;
+(function t(){const s=L[li];$("#typed").textContent=s.slice(0,ci)+"▌";if(!dl&&ci<s.length)ci++;else if(!dl){dl=true;return setTimeout(t,1300)}else if(ci>0)ci--;else{dl=false;li=(li+1)%L.length}setTimeout(t,dl?25:55)})();
+/* finder */
+const MOODS=["Anything","Action","Funny","Emotional","Cozy","Mind-bending","Fantasy"];
+const LENS=[["Anything","any"],["A movie","movie"],["Short (up to 13 eps)","short"],["Medium (14-30)","mid"],["Long (31+)","long"]];
+let mood="Anything",len="any";
+const chips=(id,items,cur,k)=>$(id).innerHTML=items.map(x=>{const v=Array.isArray(x)?x[1]:x,l=Array.isArray(x)?x[0]:x;return `<button class="chip" data-k="${k}" data-v="${v}" aria-pressed="${v===cur}">${l}</button>`}).join("");
+const lenOk=a=>{const n=a[2];return len==="any"||(len==="movie"&&!n)||(len==="short"&&n>0&&n<=13)||(len==="mid"&&n>=14&&n<=30)||(len==="long"&&n>30)};
+const match=()=>A.filter(a=>(mood==="Anything"||a[4].includes(mood))&&lenOk(a));
+const drawF=()=>{chips("#fMood",MOODS,mood,"mood");chips("#fLen",LENS,len,"len")};drawF();
+document.addEventListener("click",e=>{const d=e.target.dataset;if(d.k){d.k==="mood"?mood=d.v:len=d.v;drawF();beep(500,.06)}});
+$("#reveal").onclick=()=>{const m=match();if(!m.length){banner("NO MATCH",'#ff2e93');shake(300);$("#res").innerHTML="<p>Nothing fits that mix. Try Anything for one of the options.</p>";return}
+ m.sort((a,c)=>a[5]-c[5]);const low=m.filter(a=>a[5]===m[0][5]),pick=low[Math.floor(rnd(0,low.length))],rest=m.filter(a=>a!==pick).slice(0,2);
+ $("#reveal").disabled=true;$("#res").innerHTML="";
+ ["3","2","1"].forEach((n,i)=>setTimeout(()=>{banner(n,"#22e4ff");beep(300+i*150,.2,"square",.07)},i*900));
+ setTimeout(()=>{flash();shake(500);banner("FOUND!");say("Start with "+pick[0]);burst(W/2,H/2,160);[523,659,784,1047].forEach((x,i)=>beep(x,.3,"triangle",.07,i*.1));
+  $("#res").innerHTML=`<div class="big"><div class="po" style="background:linear-gradient(135deg,${pick[7]})">${pick[0].split(/[:!]/)[0]}</div><div class="bd"><div class="meta">YOUR FIRST ANIME</div><h3>${pick[0]}</h3><div class="meta">${pick[1]} · ${pick[3]} · Step ${pick[5]}</div><div class="tags">${pick[4].map(t=>`<i>${t}</i>`).join("")}</div><p>${pick[6]}</p>${rest.length?`<div class="path">Then try: ${rest.map(r=>`<span>${r[0]}</span>`).join("")}</div>`:""}</div></div>`;
+  $("#reveal").disabled=false},2800)};
+/* quest map */
+let done=[];try{done=JSON.parse(localStorage.getItem("done")||"[]")}catch(e){}
+const rank=xp=>{let i=0;RK.forEach((r,k)=>{if(xp>=r[0])i=k});return i};
+function hud(){const xp=done.length*100,i=rank(xp),nx=RK[i+1];$("#rk").textContent=RK[i][1];$("#xpt").textContent=xp+" XP";$("#xpf").style.width=(nx?(xp-RK[i][0])/(nx[0]-RK[i][0])*100:100)+"%";$("#logo").dataset.t=$("#logo").textContent="LEVEL "+(i+1)+": "+RK[i][1].toUpperCase()}
+function map(){$("#map").innerHTML=LV.map((l,i)=>`<div class="lvl" style="--c:${l[2]}"><h3><span>${i+1}</span>${l[0]} <em>${l[1]}</em></h3><div class="tiles">${A.filter(a=>a[5]===i+1).map(a=>`<button class="tile${done.includes(a[0])?" done":""}" data-w="${a[0]}"><div class="po" style="background:linear-gradient(135deg,${a[7]})">${a[0].split(/[:!]/)[0]}</div><div class="bd"><b>${a[0]}</b><div class="meta">${a[3]}</div><div>${a[6]}</div><div class="st">${done.includes(a[0])?"Watched +100 XP":"Tap when watched"}</div></div></button>`).join("")}</div></div>`).join("");hud()}
+map();
+$("#map").addEventListener("click",e=>{const t=e.target.closest(".tile");if(!t)return;const n=t.dataset.w,before=rank(done.length*100),r=t.getBoundingClientRect();
+ if(done.includes(n)){done=done.filter(x=>x!==n);beep(200,.15)}else{done.push(n);burst(r.left+r.width/2,r.top+40,50);beep(660,.12,"triangle",.07);beep(880,.15,"triangle",.07,.1)}
+ try{localStorage.setItem("done",JSON.stringify(done))}catch(x){}map();const after=rank(done.length*100);
+ if(after>before){flash();shake(600);banner("LEVEL UP!");say("Level up! You are now a "+RK[after][1]);burst(W/2,H/2,180);boost=.3;[523,659,784,1047,1319].forEach((x,i)=>beep(x,.3,"triangle",.07,i*.09))}
+ if(done.length===A.length){banner("ANIME SAGE!","#ffd23f");say("You watched everything. Legend!")}});
+/* secret */
+function chaos(){document.documentElement.classList.toggle("rainbow");flash();banner("CHAOS MODE");say("Chaos mode activated!");burst(W/2,H/2,160);boost=.4}
+const K=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];let ki=0;
+addEventListener("keydown",e=>{ki=(e.key===K[ki]||e.key.toLowerCase()===K[ki])?ki+1:0;if(ki===K.length){ki=0;chaos()}});
+let tp=0,tt;$("#logo").addEventListener("click",()=>{tp++;clearTimeout(tt);tt=setTimeout(()=>tp=0,1200);if(tp>=5){tp=0;chaos()}});
+</script>
+</body>
+</html>
